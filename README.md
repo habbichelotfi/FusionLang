@@ -14,6 +14,7 @@ FusionLang is a new programming language designed to combine the best features o
 
 ## Project Structure
 
+```yaml
 FusionLang/
 ├── src/
 │ ├── lexer.py
@@ -54,7 +55,7 @@ FusionLang/
 ├── README.md
 ├── LICENSE
 └── setup.py
-
+```
 
 ## Getting Started
 
@@ -78,6 +79,7 @@ python src/cli.py examples/hello.fusion
 ```
 
 ## Project Components
+```yaml
 src/lexer.py: The lexer/tokenizer implementation.
 src/parser.py: The parser implementation.
 src/semantic_analyzer.py: The semantic analyzer implementation.
@@ -86,7 +88,7 @@ src/runtime.py: The runtime environment implementation.
 src/cli.py: The command-line interface for compiling and running FusionLang programs.
 src/ast_nodes.py: Definitions of AST (Abstract Syntax Tree) node classes.
 src/utils.py: Utility functions and helpers.
-
+```
 ## Contributing
 We welcome contributions from the community. Please see the contributing guidelines for more information.
 

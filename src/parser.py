@@ -1,7 +1,7 @@
 from lexer import Lexer, TokenType
+from src.ast_nodes import ASTNode
 
-class ASTNode:
-    pass
+
 
 class Program(ASTNode):
     def __init__(self, statements):
