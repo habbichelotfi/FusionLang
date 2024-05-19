@@ -14,6 +14,7 @@ FusionLang is a new programming language designed to combine the best features o
 
 ## Project Structure
 
+```yaml
 FusionLang/
 ├── src/
 │ ├── lexer.py
@@ -54,7 +55,7 @@ FusionLang/
 ├── README.md
 ├── LICENSE
 └── setup.py
-
+```
 
 ## Getting Started
 
