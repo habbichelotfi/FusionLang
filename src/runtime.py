@@ -25,19 +25,21 @@ class Runtime:
             self.memory[identifier] = value
         elif op == 'LOAD':
             identifier = instruction[1]
-            value = self.memory[identifier]
+            value = self.memory.get(identifier, None)
             self.call_stack.append(value)
-        elif op == 'FUNC':
-            # Handle function definitions (future implementation)
-            pass
-        elif op == 'PARAM':
-            # Handle function parameters (future implementation)
-            pass
-        elif op == 'END_FUNC':
-            # Handle end of function (future implementation)
-            pass
         elif op == 'BIN_OP':
             self.handle_bin_op(instruction[1])
+        elif op == 'JUMP_IF_FALSE':
+            condition = self.call_stack.pop()
+            if not condition:
+                self.instruction_pointer = instruction[1] - 1  # -1 because the instruction pointer will be incremented after this call
+        elif op == 'JUMP':
+            self.instruction_pointer = instruction[1] - 1  # -1 because the instruction pointer will be incremented after this call
+        elif op == 'CLASS':
+            class_name = instruction[1]
+            self.memory[class_name] = {}
+        elif op == 'END_CLASS':
+            pass
         elif op == 'HALT':
             return
         else:
@@ -54,21 +56,39 @@ class Runtime:
             result = left * right
         elif operator == '/':
             result = left / right
+        elif operator == '>':
+            result = left > right
+        elif operator == '<':
+            result = left < right
+        elif operator == '>=':
+            result = left >= right
+        elif operator == '<=':
+            result = left <= right
+        elif operator == '==':
+            result = left == right
+        elif operator == '!=':
+            result = left != right
         else:
             raise RuntimeError(f'Unknown binary operator: {operator}')
         self.call_stack.append(result)
 
 # Example usage
-instructions = [
-    ('PUSH', 10),
-    ('STORE', 'x'),
-    ('LOAD', 'x'),
-    ('PUSH', 20),
-    ('BIN_OP', '+'),
-    ('HALT',)
-]
-
-runtime = Runtime()
-runtime.load_program(instructions)
-runtime.run()
-print(runtime.call_stack)  # Output: [30]
+if __name__ == "__main__":
+    instructions = [
+        ('PUSH', 10),
+        ('STORE', 'x'),
+        ('LOAD', 'x'),
+        ('PUSH', 20),
+        ('BIN_OP', '<'),
+        ('JUMP_IF_FALSE', 8),
+        ('LOAD', 'x'),
+        ('PUSH', 1),
+        ('BIN_OP', '+'),
+        ('STORE', 'x'),
+        ('JUMP', 2),
+        ('HALT',)
+    ]
+    runtime = Runtime()
+    runtime.load_program(instructions)
+    runtime.run()
+    print(runtime.memory)

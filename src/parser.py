@@ -1,4 +1,4 @@
-from lexer import TokenType
+from lexer import Lexer, TokenType
 
 class ASTNode:
     pass
@@ -6,6 +6,11 @@ class ASTNode:
 class Program(ASTNode):
     def __init__(self, statements):
         self.statements = statements
+
+class ClassDeclaration(ASTNode):
+    def __init__(self, identifier, body):
+        self.identifier = identifier
+        self.body = body
 
 class VariableDeclaration(ASTNode):
     def __init__(self, identifier, var_type, value):
@@ -18,6 +23,17 @@ class FunctionDeclaration(ASTNode):
         self.identifier = identifier
         self.parameters = parameters
         self.return_type = return_type
+        self.body = body
+
+class IfStatement(ASTNode):
+    def __init__(self, condition, then_block, else_block=None):
+        self.condition = condition
+        self.then_block = then_block
+        self.else_block = else_block
+
+class WhileStatement(ASTNode):
+    def __init__(self, condition, body):
+        self.condition = condition
         self.body = body
 
 class Parser:
@@ -48,6 +64,12 @@ class Parser:
             return self.variable_declaration()
         elif self.current_token[1] == 'func':
             return self.function_declaration()
+        elif self.current_token[1] == 'class':
+            return self.class_declaration()
+        elif self.current_token[1] == 'if':
+            return self.if_statement()
+        elif self.current_token[1] == 'while':
+            return self.while_statement()
         else:
             raise SyntaxError(f'Unexpected token: {self.current_token[1]}')
 
@@ -84,6 +106,13 @@ class Parser:
                 self.eat(TokenType.SYMBOL)  # Eat the comma ','
                 parameters.append(self.parameter())
         return parameters
+    
+    def class_declaration(self):
+        self.eat(TokenType.KEYWORD)  # Eat 'class'
+        identifier = self.current_token[1]
+        self.eat(TokenType.IDENTIFIER)
+        body = self.block()
+        return ClassDeclaration(identifier, body)
 
     def parameter(self):
         identifier = self.current_token[1]
@@ -91,7 +120,11 @@ class Parser:
         self.eat(TokenType.SYMBOL)  # Eat the colon ':'
         param_type = self.current_token[1]
         self.eat(TokenType.IDENTIFIER)
-        return (identifier, param_type)
+        default_value = None
+        if self.current_token[0] == TokenType.SYMBOL and self.current_token[1] == '=':
+            self.eat(TokenType.SYMBOL)  # Eat the equals '='
+            default_value = self.expression()
+        return (identifier, param_type, default_value)
 
     def block(self):
         self.eat(TokenType.SYMBOL)  # Eat the opening brace '{'
@@ -108,16 +141,42 @@ class Parser:
             value = self.current_token[1]
             self.eat(TokenType.INTEGER)
             return value
+        elif self.current_token[0] == TokenType.IDENTIFIER:
+            identifier = self.current_token[1]
+            self.eat(TokenType.IDENTIFIER)
+            return identifier
         else:
             raise SyntaxError(f'Unexpected token: {self.current_token[1]}')
 
+    def if_statement(self):
+        self.eat(TokenType.KEYWORD)  # Eat 'if'
+        condition = self.expression()
+        then_block = self.block()
+        else_block = None
+        if self.current_token[1] == 'else':
+            self.eat(TokenType.KEYWORD)  # Eat 'else'
+            else_block = self.block()
+        return IfStatement(condition, then_block, else_block)
+
+    def while_statement(self):
+        self.eat(TokenType.KEYWORD)  # Eat 'while'
+        condition = self.expression()
+        body = self.block()
+        return WhileStatement(condition, body)
+
 # Example usage
 if __name__ == "__main__":
-    from lexer import Lexer
     code = """
     var x: Int = 10;
     func add(a: Int, b: Int) -> Int {
-        return a + b;
+        if a > b {
+            return a;
+        } else {
+            return b;
+        }
+    }
+    while x < 20 {
+        x = x + 1;
     }
     """
     lexer = Lexer(code)
