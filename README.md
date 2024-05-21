@@ -72,7 +72,7 @@ FusionLang/
 Clone the repository:
 
 ```sh
-git clone https://github.com/yourusername/FusionLang.git
+git clone https://github.com/habbichelotfi/FusionLang.git
 cd FusionLang
 ```
 
