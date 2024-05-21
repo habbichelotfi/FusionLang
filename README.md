@@ -1,5 +1,9 @@
-# FusionLang
 
+<div align="center">
+  <h1>FusionLang</h1>
+
+  <img src="./images/fusionlang-logo.png" alt="FusionLang Logo" width="200" height="200">
+</div>
 FusionLang is a new programming language designed to combine the best features of existing languages. It aims to be powerful, versatile, and easy to use, making it suitable for a wide range of applications including web development, data science, and systems programming.
 
 ## Features
